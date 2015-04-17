@@ -4,6 +4,6 @@ library(e1071)
 
 ?naiveBayes
 
-model <- naiveBayes(Species~., data=iristrain)
-prediction <- predict(model, iristest[,-5])
-table(prediction, iristest[,5])
+model <- naiveBayes(Species~., data=trainData)
+prediction <- predict(model, testData[,-5])
+table(prediction, testData[,5])
