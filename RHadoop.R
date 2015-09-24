@@ -3,10 +3,11 @@
 install.packages( c('rJava','RJSONIO', 'itertools', 'digest','Rcpp','httr','functional','devtools', 'plyr','reshape2'))
 
 
-Sys.setenv("HADOOP_CMD"="/usr/local/Cellar/hadoop/2.6.0/bin/hadoop")
-Sys.setenv("HADOOP_STREAMING"="/usr/local/Cellar/hadoop/2.6.0/libexec/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar")
+Sys.setenv("HADOOP_CMD"="/usr/local/Cellar/hadoop/2.7.1/bin/hadoop")
+Sys.setenv("HADOOP_STREAMING"="/usr/local/Cellar/hadoop/2.7.1/libexec/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar")
 Sys.getenv("HADOOP_CMD")
-Sys.setenv("HADOOP_HOME"="/usr/local/Cellar/hadoop/2.6.0")
+Sys.setenv("HADOOP_HOME"="/usr/local/Cellar/hadoop/2.7.1")
+Sys.setenv("RSCRIPT"="/usr/local/bin/Rscript")
 
 library(rmr2)
 library(rhdfs)

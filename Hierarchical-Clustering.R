@@ -12,7 +12,7 @@ par(mfrow=c(1,2))
 group.3 <- cutree(cluster, k = 3)  # prune the tree by 3 clusters
 table(group.3, sampleiris$Species) # compare with known classes
 
-plot(trainData[,c(1,2)], col=group.3, pch=19, cex=2.5, main="3 clusters")
-points(trainData[,c(1,2)], col=trainData$Species, pch=19, cex=1)
 plot(sampleiris[,c(1,2)], col=group.3, pch=19, cex=2.5, main="3 clusters")
+points(sampleiris[,c(1,2)], col=group.3, pch=19, cex=1)
+plot(sampleiris[,c(1,2)], col=sampleiris$Species, pch=19, cex=2.5, main="3 clusters")
 points(sampleiris[,c(1,2)], col=sampleiris$Species, pch=19, cex=1)

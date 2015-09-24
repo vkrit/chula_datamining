@@ -53,4 +53,5 @@ inspect(rules[1:5])
 
 # Graph
 library(arulesViz)
+plot(rules)
 plot(rules,method="graph",interactive=TRUE,shading=NA)
