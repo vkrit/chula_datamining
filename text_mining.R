@@ -85,16 +85,25 @@ wordcloud(names(freq), freq, min.freq=500)
 
 # add some color
 set.seed(142)   
-wordcloud(names(freq), freq, min.freq=20, scale=c(5, .1), colors=brewer.pal(6, "Dark2")) 
+wordcloud(names(freq), freq, min.freq=500, scale=c(5, .1), colors=brewer.pal(6, "Dark2")) 
+
+
+dtmss <- removeSparseTerms(dtm, 0.15) # This makes a matrix that is only 15% empty space, maximum.   
+inspect(dtmss)
 
 # Hierarchical Clustering
-library(cluster)   
-d <- dist(t(dtmss), method="euclidian")   
-fit <- hclust(d=d, method="ward")   
-fit   
+#library(cluster)   
+#d <- dist(t(dtmss), method="euclidian")   
+#fit <- hclust(d=d, method="ward.D2")   
+#fit   
+#plot.new()
+#plot(fit, hang=-1)
+#groups <- cutree(fit, k=5)   # "k=" defines the number of clusters you are using   
+#rect.hclust(fit, k=5, border="red") # draw dendogram with red borders around the 5 clusters     
 
 # KMean Clustering
-library(fpc)   
-d <- dist(t(dtmss), method="euclidian")   
-kfit <- kmeans(d, 2)   
-clusplot(as.matrix(d), kfit$cluster, color=T, shade=T, labels=2, lines=0)   
+#library(fpc)   
+#d <- dist(t(dtmss), method="euclidian")  
+#d
+#kfit <- kmeans(d, 2)   
+#clusplot(as.matrix(d), kfit$cluster, color=T, shade=T, labels=2, lines=0)   
