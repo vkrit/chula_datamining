@@ -13,7 +13,7 @@ library(tm)
 docs <- Corpus(DirSource(cname))   
 
 summary(docs)  
-
+docs
 # Remove Punctuation
 docs <- tm_map(docs, removePunctuation)  
 
