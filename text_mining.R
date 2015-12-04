@@ -77,11 +77,11 @@ p <- p + geom_bar(stat="identity")
 p <- p + theme(axis.text.x=element_text(angle=45, hjust=1))   
 p   
 
-findAssocs(dtm, c("movie" , "restaurant"), corlimit=0.98)
+#findAssocs(dtm, c("movie" , "restaurant"), corlimit=0.98)
 
 library(wordcloud)
 set.seed(142)   
-wordcloud(names(freq), freq, min.freq=500)
+wordcloud(names(freq), freq, min.freq=100)
 
 # add some color
 set.seed(142)   

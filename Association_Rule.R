@@ -48,7 +48,7 @@ redundant <- colSums(subset.matrix, na.rm=T) >= 1
 rules.pruned <- rules[!redundant]
 rules<-rules.pruned
 summary(rules)
-plot(rules, method="grouped")
+plot(rules)
 
 # What are customers likely to buy after buying whole milk?
 rules<-apriori(data=Groceries, parameter=list(supp=0.001,conf = 0.08), 
