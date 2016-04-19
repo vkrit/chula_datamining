@@ -37,8 +37,8 @@ irissample
 # load e1071 library
 library(e1071)
 
-> fixIris1 <- impute(irissample[,1:4], what='mean')
-> fixIris1
+fixIris1 <- impute(irissample[,1:4], what='mean')
+fixIris1
 
 fixIris2 <- impute(irissample[,1:4], what='median')
 fixIris2
@@ -76,7 +76,7 @@ cat
 # Prepare iris
 set.seed(567)
 ind <- sample(2, nrow(iris), replace=TRUE, prob=c(0.7, 0.3))
-trainData <- iris[ind==1,]
-testData <- iris[ind==2,]
+traindata <- iris[ind==1,]
+testdata <- iris[ind==2,]
 
 

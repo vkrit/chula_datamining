@@ -4,7 +4,7 @@ install.packages(Needed, dependencies=TRUE)
 install.packages("Rcampdf", repos = "http://datacube.wu.ac.at/", type = "source")    
 
 # Load Text file
-cname <- file.path("~", "Downloads", "text")   
+cname <- file.path("~", "dev/R/Chula/Intro\ to\ R/github", "shakespear")   
 cname  
 
 dir(cname)
@@ -34,7 +34,6 @@ docs <- tm_map(docs, removeWords, stopwords("english"))
 # remove ing s, es
 library(SnowballC)   
 docs <- tm_map(docs, stemDocument)
-
 docs <- tm_map(docs, stripWhitespace) 
 # tells R to treat your preprocessed documents as text documents.
 docs <- tm_map(docs, PlainTextDocument)  
@@ -85,7 +84,7 @@ wordcloud(names(freq), freq, min.freq=100)
 
 # add some color
 set.seed(142)   
-wordcloud(names(freq), freq, min.freq=500, scale=c(5, .1), colors=brewer.pal(6, "Dark2")) 
+wordcloud(names(freq), freq, min.freq=100, scale=c(5, .1), colors=brewer.pal(6, "Dark2")) 
 
 
 dtmss <- removeSparseTerms(dtm, 0.15) # This makes a matrix that is only 15% empty space, maximum.   

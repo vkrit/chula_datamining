@@ -11,11 +11,11 @@ Sys.setenv("RSCRIPT"="/usr/local/bin/Rscript")
 
 library(rmr2)
 library(rhdfs)
-gdp <- NA
-gdp <- read.csv("~/Downloads/GDP.csv")
-gdp <- gdp[,1:4]
+romeojulius <- NA
+romeojulius <- read.csv("~/Downloads/6961313.txt")
+romeojulius <- gdp[,1:4]
 gdp$GDP <- as.double(gsub(",","",gdp$GDP))
-head(gdp)
+head(romeojulius)
 
 hdfs.init()
 gdp.values <- to.dfs(gdp)
