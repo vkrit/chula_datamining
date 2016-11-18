@@ -1,8 +1,10 @@
-library(randomforest)
+install.packages("randomForest")
+library(randomForest)
 
+?randomForest
 # Train 500 trees, random selected attributes
-model  <- randomForest(Species~., data=traindata, nTree=500)
+model  <- randomForest(Species~., data=trainData, nTree=500)
 
-prediction <- predict(model, newdata=testdata, type=‘class')
+prediction <- predict(model, newdata=testData, type='class')
 
-table(prediction, testdata$Species)
+table(prediction, testData$Species)
