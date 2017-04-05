@@ -1,4 +1,5 @@
 # Getting Data
+setwd("~/dev/R/Chula/Intro to R/github/")
 iris <- read.csv("iris.data.csv", header=TRUE)
 
 # Visualization of the Data

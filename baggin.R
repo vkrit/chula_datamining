@@ -3,8 +3,9 @@ library(randomForest)
 
 ?randomForest
 # Train 500 trees, random selected attributes
-model  <- randomForest(Species~., data=trainData, nTree=500)
+model  <- randomForest(Species~., data=traindata, nTree=500)
 
-prediction <- predict(model, newdata=testData, type='class')
+prediction <- predict(model, newdata=testdata, type='class')
 
-table(prediction, testData$Species)
+table(prediction, testdata$Species)
+confusionMatrix(prediction, testdata$Species)

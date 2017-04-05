@@ -4,6 +4,7 @@ library(e1071)
 
 ?naiveBayes
 
-model <- naiveBayes(Species~., data=trainData)
-prediction <- predict(model, testData[,-5])
-table(prediction, testData[,5])
+model <- naiveBayes(Species~., data=traindata)
+prediction <- predict(model, testdata[,-5])
+table(prediction, testdata[,5])
+confusionMatrix(prediction, testdata$Species)
