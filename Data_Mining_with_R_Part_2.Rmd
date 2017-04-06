@@ -1,0 +1,454 @@
+---
+title: "Data Mining Part 2"
+author: "Veerasak Kritsanapraphan"
+date: "4/6/2017"
+output:
+  ioslides_presentation: default
+  beamer_presentation: default
+  slidy_presentation: default
+logo: cu100.png
+---
+<style>
+.title-slide {
+  background-color: #DB598A; /* #EDE0CF; ; #CA9F9D*/
+}
+
+.title-slide hgroup > h1{
+ font-family: 'Oswald', 'Helvetica', sanserif; 
+}
+
+.title-slide hgroup > h1, 
+.title-slide hgroup > h2,
+.title-slide hgroup > p {
+  color: #FFFFFF ;  
+}
+</style>
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(echo = FALSE)
+opts_chunk$set(warning=FALSE, message=FALSE)
+opts_chunk$set(tidy.opts=list(width.cutoff=58),tidy=TRUE)
+```
+
+## Agenda
+
+* Data Mining Techniques using R
+  + Predictive Modeling Performance
+  + Clustering
+    - K-Means Clustering
+    - Hierarchical Clustering
+  + Association Rules (Market Basket Analysis)
+  + Multi-model Learning
+* Text-Mining
+  
+## Slide and Sample Data
+
+<https://github.com/vkrit/chula_datamining>.
+![github](github-logo.png)
+
+## Prepare Data
+
+```{r, echo = TRUE}
+# Prepare iris
+set.seed(567)
+ind <- sample(2, nrow(iris), replace=TRUE, prob=c(0.7, 0.3))
+traindata <- iris[ind==1,]
+testdata <- iris[ind==2,]
+table(traindata$Species)
+```
+
+## Predictive Modeling Performance
+
+```{r}
+library(png)
+library(grid)
+img <- readPNG("contingency.png")
+grid.raster(img)
+```
+
+## Create Decision Tree Model
+```{r, echo = TRUE}
+library(party)
+
+myFormula <- Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width
+iris_ctree <- ctree(myFormula, data=traindata)
+```
+
+## Create Confusion Matrix from Training Data
+```{r, echo = TRUE}
+library(caret)
+trainPred = predict(iris_ctree,traindata)
+confusionMatrix(traindata$Species,trainPred)
+```
+
+## Confusion Matrix
+```{r}
+library(png)
+library(grid)
+img <- readPNG("contingency1.png")
+grid.raster(img)
+```
+
+## K-Means Clustering
+
+1. Pick an initial set of K centroids (this can be random or any other means)
+2. For each data point, assign it to the member of the closest centroid according to the given distance function
+3. Adjust the centroid position as the mean of all its assigned member data points. Go back to (2) until the membership isn't change and centroid position is stable.
+4. Output the centroids
+
+## K-Means (cont.)
+
+```{r, echo=TRUE, fig.height=3.5}
+library(stats)
+set.seed(101)
+km <- kmeans(iris[,1:4], 3)
+plot(iris[,1], iris[,2], col=km$cluster)
+points(km$centers[, c(1,2)], col=1:2, pch=19, cex=2)
+```
+
+## K-Means (cont.)
+```{r, echo=TRUE}
+table(km$cluster, iris$Species)
+```
+
+## K-Means (second round)
+
+```{r, echo=TRUE, fig.height=3.5}
+set.seed(900)
+km <- kmeans(iris[,1:4], 3)
+plot(iris[,1], iris[,2], col=km$cluster)
+points(km$centers[,c(1,2)], col=1:3, pch=19, cex=2)
+```
+
+## K-Means (second round - cont.)
+
+```{r}
+table(km$cluster, iris$Species)
+```
+
+## Hierarchical Clustering
+
+  1. **Compute distance between every pairs of point/cluster**
+    + Distance between point is just using the distance function.
+    + Compute distance between point A to cluster B may involve many choices (such as the min/max/avg distance between the point A and points in the cluster B)
+    + Compute distance between cluster A to cluster B may first compute distance of all points pairs (one from cluster A and the the other from cluster B) and then pick either min/max/avg of these pairs.
+  2. **Combine the two closest point/cluster into a cluster. Go back to (1) until only one big cluster remains**
+
+## Hierarchical Clustering
+
+```{r, echo=TRUE}
+set.seed(101)
+sampleiris <- iris[sample(1:150, 40),] # get samples from iris dataset
+# each observation has 4 variables, ie, they are interpreted as 4-D points
+distance <- dist(sampleiris[,-5], method="euclidean")
+cluster <- hclust(distance, method="average")
+```
+
+##
+```{r, echo=TRUE}
+plot(cluster, hang=-1, label=sampleiris$Species)
+```
+
+## Prune the result tree to 3 groups
+
+```{r, echo=TRUE}
+group.3 <- cutree(cluster, k = 3) # prune the tree
+table(group.3, sampleiris$Species)
+```
+
+## Plot cluster by column 1 and 2
+```{r, echo=TRUE, fig.height=3.5}
+par(mfrow=c(1,2))
+plot(sampleiris[,c(1,2)], col=group.3, pch=19, cex=1, main="3 clusters")
+plot(sampleiris[,c(1,2)], col=sampleiris$Species, pch=19, cex=1, main="real clusters")
+```
+
+## Association Rules (Market Basket Analysis)
+
+```{r fig.width=3, fig.height=1, echo=FALSE}
+library(png)
+library(grid)
+img <- readPNG("association.png")
+ grid.raster(img)
+```
+
+__Support__: The rule holds with support sup in T (the transaction data set) if sup % of transactions contain X Y.
+
+__Confidence__: The rule holds in T with confidence conf if conf% of tranactions that contain X also contain Y.
+
+__Lift__ : The Lift of the rule is X=>Y is the confidence of the rule divided by the expected confidence, assuming that the item sets are independent.
+
+## Apriori Algorithm
+
+```{r, echo=TRUE}
+# Loead the libraries
+library(registry)
+library(Matrix)
+library(arules)
+library(arulesViz)
+library(datasets)
+
+# Load the data set
+data(Groceries)
+```
+
+## Data Format
+
+```{r fig.width=5, fig.height=5, echo=FALSE}
+library(png)
+library(grid)
+img <- readPNG("data_association.png")
+ grid.raster(img)
+```
+
+## Explore Groceries Data
+
+```{r, echo=TRUE}
+# Create an item frequency plot for the top 20 items
+itemFrequencyPlot(Groceries, topN=20,type="absolute")
+```
+
+## Create Association Rules
+
+```{r, echo=TRUE}
+rules <- apriori(Groceries, parameter = list(supp = 0.001, conf = 0.8))
+# Show the top 5 rules, but only 2 digits
+options(digits=2)
+inspect(rules[1:5])
+```
+
+## Plot Rules
+
+```{r, echo=TRUE}
+plot(rules)
+```
+
+## Sort Rules
+
+```{r, echo=TRUE}
+rules<-sort(rules, by="confidence", decreasing=TRUE) 
+inspect(rules[1:5])
+```
+
+## 
+```{r, echo=TRUE}
+plot(rules, method="grouped")
+```
+
+## Change to have limit association in one rule
+
+```{r, echo=TRUE}
+rules <- apriori(Groceries, parameter = list(supp = 0.001, conf = 0.8, maxlen = 3))
+inspect(rules[1:5])
+```
+
+##
+
+```{r, echo=TRUE}
+plot(rules, method="graph")
+```
+
+## Rules pruned
+
+```{r, echo=TRUE}
+subset.matrix <- is.subset(rules, rules)
+subset.matrix[lower.tri(subset.matrix, diag=T)] <- NA
+redundant <- colSums(subset.matrix, na.rm=T) >= 1
+rules.pruned <- rules[!redundant]
+rules<-rules.pruned
+```
+
+##
+
+```{r, echo=TRUE}
+summary(rules)
+```
+
+## Targeting Items
+
+* What are customers likely to buy before buying whole milk?
+* What are customers likely to buy if they purchase whole milk?
+* This essentially means we want to set either the Left Hand Side adn Right Hand Side. This is not difficult to do with R!
+
+## Find whole milk's antecedents
+
+```{r, echo=TRUE}
+rules <- apriori(data=Groceries, parameter=list(supp=0.001,conf = 0.08), appearance =list(default="lhs",rhs="whole milk"), control = list(verbose=F))
+rules<-sort(rules, decreasing=TRUE,by="confidence")
+inspect(rules[1:5])
+```
+
+## Likely to buy after buy whole milk
+
+```{r, echo=TRUE}
+rules<-apriori(data=Groceries, parameter=list(supp=0.001,conf = 0.15,minlen=2), appearance = list(default="rhs",lhs="whole milk"), control = list(verbose=F))
+rules<-sort(rules, decreasing=TRUE,by="confidence")
+inspect(rules[1:5])
+```
+
+# Multi-model Learning
+
+Bagging and Boosting using R
+
+## Ensemble : Bagging
+
+```{r fig.width=5, fig.height=5, echo=FALSE}
+library(png)
+library(grid)
+img <- readPNG("Random-Forest.png")
+ grid.raster(img)
+```
+
+## Random Forest
+
+* Here is how such a system is trained; for some number of trees T:
+  + Sample N cases at random with replacement to create a subset of the data. The subset should be about 66% of the total set.
+  + At each node:
+    + For some number m (see below), m predictor variables are selected at random from all the predictor variables
+    + The predictor variable that provides the best split, according to some objective function, is used to do a binary split on that node.
+    + At the next node, choose another m variables at random from all predictor variables and do the same.
+    
+## Bagging
+
+```{r, echo=TRUE}
+library(ggplot2)
+library(randomForest)
+# Train 500 trees, random selected attributes
+model <- randomForest(Species~., data=traindata, nTree=500)
+prediction <- predict(model, newdata=testdata, type="class")
+table(prediction, testdata$Species)
+```
+
+## Boosting
+
+```{r, echo=TRUE}
+library(adabag)
+iris.adaboost <- boosting(Species~., data=traindata, boost=TRUE, mfinal=5)
+iris.adaboost
+```
+
+## Plot variables important
+
+```{r, echo=TRUE}
+barplot(iris.adaboost$imp[order(iris.adaboost$imp, decreasing = TRUE)], ylim = c(0, 100), main = "Variables Relative Importance", col = "lightblue")
+```
+
+## Boosting (compare result)
+
+```{r, echo=TRUE}
+table(iris.adaboost$class, traindata$Species, dnn = c("Predicted Class", "Observed Class"))
+```
+
+## Text Mining
+
+* Get Text Mining Library
+```{r, echo=TRUE}
+#Needed <- c("tm", "SnowballCC", "RColorBrewer", "wordcloud", "biclust", "igraph", "fpc")
+#install.packages(Needed, dependencies = TRUE)
+```
+
+## Load file (Shakespear's Plays)
+
+```{r, echo=TRUE}
+TEXTFILE = "t8.shakespeare.txt"
+if (!file.exists(TEXTFILE)) {
+    download.file("https://ocw.mit.edu/ans7870/6/6.006/s08/lecturenotes/files/t8.shakespeare.txt", destfile = TEXTFILE)
+}
+shakespeare = readLines(TEXTFILE)
+length(shakespeare)
+shakespeare = shakespeare[-(1:173)]
+shakespeare = shakespeare[-(124195:length(shakespeare))]
+shakespeare = paste(shakespeare, collapse = " ")
+shakespeare = strsplit(shakespeare, "<<[^>]*>>")[[1]]
+```
+
+## Text Mining
+
+```{r, echo=TRUE}
+library(tm)
+docs.vec <- VectorSource(shakespeare)
+docs.corpus <- Corpus(docs.vec)
+summary(docs.corpus)
+```
+
+## Text Mining Basic
+
+```{r, echo=TRUE}
+#Remove Punctuation
+docs.corpus <- tm_map(docs.corpus, removePunctuation) 
+head(docs.corpus)
+```
+
+
+```{r, echo=TRUE}
+# Remove Number
+docs.corpus <- tm_map(docs.corpus, removeNumbers)
+docs.corpus <- tm_map(docs.corpus, tolower)
+# Remove Stopwords
+docs.corpus <- tm_map(docs.corpus, removeWords, stopwords("english"))
+```
+
+## Clean Data
+
+```{r, echo=TRUE}
+# remove ing s, es
+library(SnowballC)
+docs.corpus <- tm_map(docs.corpus, stemDocument)
+docs.corpus <- tm_map(docs.corpus, stripWhitespace)
+```
+
+## Step of Text Mining
+
+Create Document Term Matrix
+
+```{r, echo=TRUE}
+# Create Document Term Matrix 
+dtm <- DocumentTermMatrix(docs.corpus) 
+inspect(dtm[1:10,1:10])
+```
+
+## Create Term Document Matrix
+```{r, echo=TRUE}
+# Create Term Document Matrix 
+tdm <- TermDocumentMatrix(docs.corpus) 
+inspect(tdm[1:10,1:10])
+```
+
+## Explore Data
+
+```{r, echo=TRUE}
+# Explore Data
+freq <- colSums(as.matrix(dtm))
+length(freq)
+ord <- order(freq)
+head(ord)
+```
+
+## Removing sparse terms
+
+```{r, echo=TRUE}
+# Start by removing sparse terms:
+TDM.common = removeSparseTerms(tdm, 0.1)
+dim(tdm)
+dim(TDM.common)
+m = as.matrix(tdm)
+v = sort(rowSums(m), decreasing = TRUE)
+d <- data.frame(word = names(v),freq=v)
+head(d, 10)
+```
+
+
+## Create Word Cloud
+
+```{r, echo=TRUE}
+library(wordcloud)
+set.seed(1234)
+wordcloud(words = d$word, freq = d$freq, min.freq = 1,
+          max.words=200, random.order=FALSE, rot.per=0.35, 
+          colors=brewer.pal(8, "Dark2"))
+```
+
+# Thank you
+
+email : veerasak.kr568@cbs.chula.ac.th
