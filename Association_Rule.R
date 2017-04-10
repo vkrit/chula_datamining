@@ -31,16 +31,6 @@ plot(rules, method="grouped")
 rules<-sort(rules, by="confidence", decreasing=TRUE)
 inspect(rules[1:5])
 
-# change to have maximum of 3
-rules <- apriori(Groceries, parameter = list(supp = 0.001, conf = 0.8,maxlen=3))
-inspect(rules[1:5])
-summary(rules)
-?plot
-plot(rules, method="graph")
-plot(rules, method="paracoord")
-
-
-?is.subset
 # Rules pruned
 subset.matrix <- is.subset(rules, rules)
 subset.matrix[lower.tri(subset.matrix, diag=T)] <- NA
@@ -49,6 +39,15 @@ rules.pruned <- rules[!redundant]
 rules<-rules.pruned
 summary(rules)
 plot(rules)
+
+# change to have maximum of 3
+rules <- apriori(Groceries, parameter = list(supp = 0.001, conf = 0.8,maxlen=3))
+inspect(rules[1:5])
+summary(rules)
+?plot
+plot(rules, method="graph")
+plot(rules, method="paracoord")
+
 
 # What are customers likely to buy after buying whole milk?
 rules<-apriori(data=Groceries, parameter=list(supp=0.001,conf = 0.08), 
