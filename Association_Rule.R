@@ -30,7 +30,11 @@ plot(rules, method="grouped")
 #sort rules
 rules<-sort(rules, by="confidence", decreasing=TRUE)
 inspect(rules[1:5])
+<<<<<<< HEAD
 ?is.subset
+=======
+
+>>>>>>> 0dc063d26dd6533029c726c4c7dd851ef93710f5
 # Rules pruned
 subset.matrix <- is.subset(rules, rules)
 subset.matrix[lower.tri(subset.matrix, diag=T)] <- NA
