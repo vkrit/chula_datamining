@@ -1,0 +1,61 @@
+---
+title: "Data Mining Part 2"
+author: "Veerasak Kritsanapraphan"
+date: "4/6/2017"
+output:
+  ioslides_presentation: default
+  beamer_presentation: default
+  slidy_presentation: default
+---
+<style>
+.title-slide {
+  background-color: #DB598A; /* #EDE0CF; ; #CA9F9D*/
+}
+
+.title-slide hgroup > h1{
+ font-family: 'Oswald', 'Helvetica', sanserif; 
+}
+
+.title-slide hgroup > h1, 
+.title-slide hgroup > h2,
+.title-slide hgroup > p {
+  color: #FFFFFF ;  
+}
+</style>
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(echo = FALSE)
+opts_chunk$set(warning=FALSE, message=FALSE)
+opts_chunk$set(tidy.opts=list(width.cutoff=58),tidy=TRUE)
+```
+
+## Prediction Model Performance
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+
+## Prepare Data
+
+```{r}
+# Prepare iris
+set.seed(567)
+ind <- sample(2, nrow(iris), replace=TRUE, prob=c(0.7, 0.3))
+traindata <- iris[ind==1,]
+testdata <- iris[ind==2,]
+```
+
+## Create Decision Tree Model
+```{r}
+library(party)
+
+myFormula <- Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width
+iris_ctree <- ctree(myFormula, data=traindata)
+```
+
+## Create Confusion Matrix from Training Data
+```{r}
+library(caret)
+trainPred = predict(iris_ctree,traindata)
+confusionMatrix(traindata$Species,trainPred)
+```
+
